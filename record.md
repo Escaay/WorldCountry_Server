@@ -80,3 +80,5 @@ model C {
 9. apifox里面的数据模型是params参数模型，对应的是前端和后端的接口参数type定义，prisma模型对应的是数据库的类型，他们的定义不完全一样，有出入，比如传参不用传createTime，但是数据库里面需要存储createTime，此时type不需要定义，但是模型需要定义，type对应的是接口（前端-服务端），prisma对应的是（服务端-数据库），这里容易混淆
 
 10. 装了uuid后引入飘红，就安装他的类型包，npm i @types/uuid --dev
+
+11. 前后端都要做数据限制，但是他们的方法可以复用，例如passwordValidator
