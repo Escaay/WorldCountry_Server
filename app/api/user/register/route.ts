@@ -11,23 +11,23 @@ import { apiCatchError } from "@/utils/apiCatchError";
 import { createAccessToken } from "@/utils/authorization";
 export async function POST(req: NextRequest) {
   const prisma = new PrismaClient();
-  const fn = async () => {
+    const id = uuidv4();
+    const fn = async () => {
     const body: Register = await req.json();
     const { phone, code, password } = body;
     await phoneValidator(phone);
     await passwordValidator(password);
     await codeValidator(code);
-    const uuid = uuidv4();
     await prisma.user_login.create({
       data: {
-        id: uuid,
+        id,
         phone,
         password,
       },
     });
     await prisma.user_basis.create({
       data: {
-        id: uuid,
+        id,
         phone,
       },
     });
@@ -35,15 +35,15 @@ export async function POST(req: NextRequest) {
   try {
     await apiCatchError(prisma, fn);
     return Response.json({
-      code: 1,
+      code: 200,
       message: "注册成功",
       data: {
-        accessToken: createAccessToken({})
+        accessToken: await createAccessToken({id})
       },
     });
   } catch (e) {
     return Response.json({
-      code: 0,
+      code: 400,
       message: e,
     });
   }

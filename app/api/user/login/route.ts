@@ -8,8 +8,6 @@ import {
   passwordValidator,
   codeValidator,
 } from "@/utils/validators";
-import Error from "next/error";
-import { access } from "fs";
 export async function POST(req: NextRequest) {
   const prisma = new PrismaClient();
   const fn = async () => {
@@ -24,20 +22,21 @@ export async function POST(req: NextRequest) {
         }
     })
     if (row?.password !== password) return Promise.reject('密码错误')
+    return row?.id
   };
 try {
-  await apiCatchError(prisma, fn);
+  const id = await apiCatchError(prisma, fn);
   return Response.json({
-    code: 1,
+    code: 200,
     message: "登录成功",
     data: {
-      accessToken: createAccessToken({})
+      accessToken: createAccessToken({id})
     },
   });
 }
     catch (e) {
       return Response.json({
-        code: 0,
+        code: 400,
         messgae: e,
       });
     }

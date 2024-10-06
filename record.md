@@ -82,3 +82,5 @@ model C {
 10. 装了uuid后引入飘红，就安装他的类型包，npm i @types/uuid --dev
 
 11. 前后端都要做数据限制，但是他们的方法可以复用，例如passwordValidator
+
+12. jwt在next下面会有冲突，因为next用的是一个轻量的运行时node引擎，要用jose库，还有在签发token的时候要把用户id传到payload中，验证之后以便确认是哪位用户做了登录操作
