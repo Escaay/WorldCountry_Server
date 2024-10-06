@@ -8,7 +8,7 @@ import {
   codeValidator,
 } from "@/utils/validators";
 import { apiCatchError } from "@/utils/apiCatchError";
-import { createAccessToken } from "@/utils/authorization";
+import { createToken } from "@/utils/authorization";
 export async function POST(req: NextRequest) {
   const prisma = new PrismaClient();
     const id = uuidv4();
@@ -38,7 +38,8 @@ export async function POST(req: NextRequest) {
       code: 200,
       message: "注册成功",
       data: {
-        accessToken: await createAccessToken({id})
+        accessToken: await createToken({id, type: 'access'}),
+        refreshToken: await createToken({id, type: 'refresh'})
       },
     });
   } catch (e) {

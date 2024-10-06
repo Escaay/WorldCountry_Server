@@ -83,4 +83,4 @@ model C {
 
 11. 前后端都要做数据限制，但是他们的方法可以复用，例如passwordValidator
 
-12. jwt在next下面会有冲突，因为next用的是一个轻量的运行时node引擎，要用jose库，还有在签发token的时候要把用户id传到payload中，验证之后以便确认是哪位用户做了登录操作
+12. jwt在next下面会有冲突，因为next用的是一个轻量的运行时node引擎，要用jose库，还有在签发token的时候要把用户id传到payload中，用于验证时确认用户，还要把时间戳放到payload中让每次token不一样

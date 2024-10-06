@@ -2,12 +2,13 @@ import { type NextRequest } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import type { UserLogin } from "@/type/user";
 import { apiCatchError } from "@/utils/apiCatchError";
-import { createAccessToken } from "@/utils/authorization";
+import { createToken } from "@/utils/authorization";
 import {
   phoneValidator,
   passwordValidator,
   codeValidator,
 } from "@/utils/validators";
+import { timeStamp } from "console";
 export async function POST(req: NextRequest) {
   const prisma = new PrismaClient();
   const fn = async () => {
@@ -26,11 +27,12 @@ export async function POST(req: NextRequest) {
   };
 try {
   const id = await apiCatchError(prisma, fn);
-  return Response.json({
+    return Response.json({
     code: 200,
     message: "登录成功",
     data: {
-      accessToken: createAccessToken({id})
+      accessToken: await createToken({id, type: 'access'}),
+      refreshToken: await createToken({id, type: 'refresh'})
     },
   });
 }
