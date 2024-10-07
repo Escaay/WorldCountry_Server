@@ -7,17 +7,25 @@ import {
   phoneValidator,
   codeValidator,
 } from "@/utils/validators";
-import { apiCatchError } from "@/utils/apiCatchError";
 import { createToken } from "@/utils/authorization";
 export async function POST(req: NextRequest) {
   const prisma = new PrismaClient();
+  try {
     const id = uuidv4();
-    const fn = async () => {
     const body: Register = await req.json();
     const { phone, code, password } = body;
+    // 格式校验
     await phoneValidator(phone);
     await passwordValidator(password);
     await codeValidator(code);
+    // 手机号是否已注册
+    const hasRegister = !!(await prisma.user_login.findFirst({
+      where: {
+        phone,
+      }
+    }))
+    console.log(hasRegister)
+    if (hasRegister) await Promise.reject('手机号已注册')
     await prisma.user_login.create({
       data: {
         id,
@@ -31,9 +39,6 @@ export async function POST(req: NextRequest) {
         phone,
       },
     });
-  };
-  try {
-    await apiCatchError(prisma, fn);
     return Response.json({
       code: 200,
       message: "注册成功",
@@ -47,5 +52,7 @@ export async function POST(req: NextRequest) {
       code: 400,
       message: e,
     });
+  } finally {
+    prisma.$disconnect()
   }
 }

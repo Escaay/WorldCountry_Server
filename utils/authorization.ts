@@ -8,7 +8,7 @@ const encodedSecret = new TextEncoder().encode("qiuwenjing_secert");
 export const createToken = async (payload: any) => {
   // 用时间戳让每一次签发的token不重复
   const signedToken = await new jose.SignJWT({
-    payload,
+    ...payload,
     timeStamp: new Date().getTime(),
   })
     .setProtectedHeader({ alg: "HS256" })
@@ -28,6 +28,8 @@ export const verifyToken = async (req: any, nextRes: NextResponse) => {
   let decodedAccessToken, decodedRefreshToken;
   try {
     decodedAccessToken = await jose.jwtVerify(token, encodedSecret);
+    // 防止refreshToken登录
+    if (decodedAccessToken.payload.type !== 'access') Promise.reject('token类型错误')
   } catch (err1) {
     try {
       // 尝试用刷新token
@@ -37,7 +39,7 @@ export const verifyToken = async (req: any, nextRes: NextResponse) => {
       nextRes.headers.append("accessToken", await createToken(decodedAccessToken?.payload))
       nextRes.headers.append("refreshToken", await createToken(decodedRefreshToken?.payload))
       } catch (err2) {
-      return Promise.reject('token验证不通过')
+      return Promise.reject('token验证不通过' + err1)
     }
   }
 };
