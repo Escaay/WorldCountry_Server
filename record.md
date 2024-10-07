@@ -87,3 +87,5 @@ model C {
 
 13. 想要catch捕获promise的reject，就要await,例如
 if (hasRegister) await Promise.reject('手机号已注册')
+
+14. 如果修改了表结构，记得重启studio和服务端，不然容易报错，类型验证这一块

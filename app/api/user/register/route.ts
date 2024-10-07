@@ -39,6 +39,12 @@ export async function POST(req: NextRequest) {
         phone,
       },
     });
+    await prisma.chat_list.create({
+      data: {
+        id,
+        body: []
+      },
+    });
     return Response.json({
       code: 200,
       message: "注册成功",

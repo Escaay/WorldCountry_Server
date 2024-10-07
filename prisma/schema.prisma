@@ -41,10 +41,5 @@ model user_login {
 
 model chat_list {
   id String @unique @default(uuid())
-  createTime DateTime @default(now())
-  updateTime DateTime @updatedAt
-  name String
-  isRead Boolean? @default(false)
-  isDelete Boolean? @default(false)
-  content String
+  body Json?
 }

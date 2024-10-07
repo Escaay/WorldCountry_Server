@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
     // 除了customTags是相关性排序，其他都是硬性指标必须完全一样
     const rows = await prisma.user_basis.findMany({
         where: {
-            OR: filterWhereArr.length ? filterWhereArr : [filterWhere]
+            OR: [...filterWhereArr, filterWhere]
         }
     })
     return Response.json(rows)
