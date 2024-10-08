@@ -3,7 +3,6 @@
 
 generator client {
   provider = "prisma-client-js"
-  previewFeatures = ["fullTextSearch"]
 }
 
 datasource db {
@@ -15,13 +14,13 @@ model user_basis {
   id              String  @unique @default(uuid())
   phone           String
   name            String @default("")
-  avatarURL       String @default("https://www.bing.com/images/search?q=%E5%A4%B4%E5%83%8F&FORM=IQFRBA&id=104C5A5EDCF06680BDFE59E35C147516E0ABD939")
+  avatarURL       String @default("")
   gender          String?
   age             Int?
   vx              String?
   originalAddress Json?
   currentAddress  Json?
-  status          String?
+  status          Json?
   filterInfo      Json?
   customTags      Json?
   height          Int?

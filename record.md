@@ -89,3 +89,15 @@ model C {
 if (hasRegister) await Promise.reject('手机号已注册')
 
 14. 如果修改了表结构，记得重启studio和服务端，不然容易报错，类型验证这一块
+
+15. JSON格式在筛选的时候在where中不能直接写相等，要用equals,例如currentAddress: ['广东省', '清远市']会报错，要用
+currentAddress: {
+  equals: ['广东省', '清远市']
+}
+
+16. 前端axios对响应的统一判断是code === 200成功，对报错的处理是message,那么后端也要统一响应格式，例如
+    return Response.json({
+        code: 200,
+        message: '请求列表成功',
+        data: rows
+    })

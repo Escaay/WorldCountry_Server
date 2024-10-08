@@ -6,11 +6,15 @@ export async function POST(req: NextRequest) {
     body.customTags = Array.from(new Set(body.customTags))
     const prisma = new PrismaClient()
     const {id} = body
-    const res = await prisma.user_basis.update({
+    const data = await prisma.user_basis.update({
         where: {
             id
         },
         data: body
     })
-    return Response.json(res)
+    return Response.json({
+        code: 200,
+        data,
+        message: '保存成功'
+    })
 }

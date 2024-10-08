@@ -22,10 +22,10 @@ export async function POST(req: NextRequest) {
     const hasRegister = !!(await prisma.user_login.findFirst({
       where: {
         phone,
-      }
-    }))
-    console.log(hasRegister)
-    if (hasRegister) await Promise.reject('手机号已注册')
+      },
+    }));
+    console.log(hasRegister);
+    if (hasRegister) await Promise.reject("手机号已注册");
     await prisma.user_login.create({
       data: {
         id,
@@ -37,20 +37,29 @@ export async function POST(req: NextRequest) {
       data: {
         id,
         phone,
+        name: "未设置",
+        avatarURL: "",
+        gender: "男",
+        age: 0,
+        originalAddress: ["广东省", "深圳市", "大鹏新区"],
+        currentAddress: ["广东省", "深圳市", "大鹏新区"],
+        status: ["自由"],
+        customTags: ["地球村民"],
       },
     });
     await prisma.chat_list.create({
       data: {
         id,
-        body: []
+        body: [],
       },
     });
     return Response.json({
       code: 200,
       message: "注册成功",
       data: {
-        accessToken: await createToken({id, type: 'access'}),
-        refreshToken: await createToken({id, type: 'refresh'})
+        id,
+        accessToken: await createToken({ id, type: "access" }),
+        refreshToken: await createToken({ id, type: "refresh" }),
       },
     });
   } catch (e) {
@@ -59,6 +68,6 @@ export async function POST(req: NextRequest) {
       message: e,
     });
   } finally {
-    prisma.$disconnect()
+    prisma.$disconnect();
   }
 }
