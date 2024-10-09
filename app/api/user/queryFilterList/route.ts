@@ -3,6 +3,7 @@ import { PrismaClient, Prisma  } from '@prisma/client'
 import { equal } from 'assert'
 export async function POST(req: NextRequest) {
     const body = await req.json()
+    // console.log('body', body)
     const prisma = new PrismaClient()
     const filterInfo = body
     for (let key in filterInfo) {
@@ -31,13 +32,15 @@ export async function POST(req: NextRequest) {
             string_contains: item
         }
     }))
-    console.log(filterInfo.originalAddress,'filterInfo.originalAddress')
+    // 最终的where, 判断传进来的是否是空对象，如果是空对象不能使用where: {OR: []},要用where: {}才能获取全部数据，OR为空数组不会获取任何数据
+    const where = Object.keys(filterWhere).length !== 0 ? {
+        OR: [...filterWhereArr, filterWhere]
+    } : {}
     // 除了customTags是相关性排序，其他都是硬性指标必须完全一样
     const rows = await prisma.user_basis.findMany({
-        where: {
-            OR: [...filterWhereArr, filterWhere]
-        }
+        where
     })
+    // console.log('rows', rows)
     return Response.json({
         code: 200,
         message: '请求列表成功',

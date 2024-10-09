@@ -45,6 +45,8 @@ export async function POST(req: NextRequest) {
         currentAddress: ["广东省", "深圳市", "大鹏新区"],
         status: ["自由"],
         customTags: ["地球村民"],
+        filterInfo: {},
+        filterConds: ['gender', 'minAge', 'maxAge', 'originalAddress', 'currentAddress', 'status', 'customTags']
       },
     });
     await prisma.chat_list.create({
