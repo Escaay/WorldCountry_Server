@@ -22,6 +22,7 @@ model user_basis {
   currentAddress  Json?
   status          Json?
   filterInfo      Json?
+  filterConds     Json? // 筛选条件
   customTags      Json?
   height          Int?
   weight          Int?
