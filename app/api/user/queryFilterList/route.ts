@@ -36,7 +36,6 @@ export async function POST(req: NextRequest) {
         OR: [...filterWhereArr, filterWhere]
     } : {}
     // 除了customTags是相关性排序，其他都是硬性指标必须完全一样
-    console.dir(where.OR, { depth: null })
     const rows = await prisma.user_basis.findMany({
         where
     })
