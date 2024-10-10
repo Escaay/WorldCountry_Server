@@ -1,4 +1,3 @@
-import { timeStamp } from "console";
 import * as jose from "jose";
 import { NextResponse } from "next/server";
 
@@ -29,7 +28,7 @@ export const verifyToken = async (req: any, nextRes: NextResponse) => {
   try {
     decodedAccessToken = await jose.jwtVerify(token, encodedSecret);
     // 防止refreshToken登录
-    if (decodedAccessToken.payload.type !== 'access') Promise.reject('token类型错误')
+    if (decodedAccessToken.payload.type !== 'access') await Promise.reject('token类型错误')
   } catch (err1) {
     try {
       // 尝试用刷新token

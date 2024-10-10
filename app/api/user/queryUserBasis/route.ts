@@ -1,6 +1,5 @@
 import { type NextRequest } from 'next/server'
 import { PrismaClient } from '@prisma/client'
-import { verifyToken } from '@/utils/authorization'
 // 没传userId就是请求自己的信息，直接从accessToken里面取
 export async function POST(req: NextRequest) {
     const body = await req.json()
@@ -13,7 +12,7 @@ export async function POST(req: NextRequest) {
     })
     return Response.json({
         code: 200,
-        data: row,
+        data: row ? row : {},
         message: '请求成功'
     })
 }

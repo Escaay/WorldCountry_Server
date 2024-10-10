@@ -101,3 +101,11 @@ currentAddress: {
         message: '请求列表成功',
         data: rows
     })
+
+17. 阿里云云函数部署过程：
+阿里云建立云函数，启动方法写npm run start，开启公网
+把整个项目除了node_modules跟.next之外，压缩后部署到云函数
+执行npm i安装依赖, 执行npm run build打包
+打包成功后点击部署，然后当你调用接口，云函数就会自动执行npm run start然后响应（不用自己npm run start）
+如果打包卡住不动，试试删除.next文件，日志服务是不需要的，因为可以自己把错误信息响应回去，用apifox调试
+请求的时候不用在公网url后面加3000端口，直接请求url就行

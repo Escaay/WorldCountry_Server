@@ -1,13 +1,12 @@
 import { type NextRequest } from "next/server";
 import { PrismaClient } from "@prisma/client";
-import type { UserLogin } from "@/type/user";
+// import type { UserLogin } from "@/type/user";
 import { createToken } from "@/utils/authorization";
 import {
   phoneValidator,
   passwordValidator,
-  codeValidator,
+  // codeValidator,
 } from "@/utils/validators";
-import { timeStamp } from "console";
 export async function POST(req: NextRequest) {
   const prisma = new PrismaClient();
 try {
@@ -16,7 +15,7 @@ try {
   const { phone, password } = body;
   await phoneValidator(phone);
   await passwordValidator(password);
-  const row: any = await prisma.user_login.findFirst({
+  const row = await prisma.user_login.findFirst({
       where: {
           phone: phone
       }
@@ -31,9 +30,9 @@ try {
     code: 200,
     message: "登录成功",
     data: {
-      id: row.id,
-      accessToken: await createToken({id: row.id, type: 'access'}),
-      refreshToken: await createToken({id: row.id, type: 'refresh'})
+      id: row?.id,
+      accessToken: await createToken({id: row?.id, type: 'access'}),
+      refreshToken: await createToken({id: row?.id, type: 'refresh'})
     },
   });
 

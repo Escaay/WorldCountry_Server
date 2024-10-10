@@ -1,12 +1,11 @@
 import { type NextRequest } from 'next/server'
-import { PrismaClient, Prisma  } from '@prisma/client'
-import { equal } from 'assert'
+import { PrismaClient } from '@prisma/client'
 export async function POST(req: NextRequest) {
     const body = await req.json()
     // console.log('body', body)
     const prisma = new PrismaClient()
     const filterInfo = body
-    for (let key in filterInfo) {
+    for (const key in filterInfo) {
         if (!filterInfo[key] || (Array.isArray(filterInfo[key]) && !filterInfo[key].length)) delete filterInfo[key]
     }
     const {customTags = [], maxAge, minAge} = filterInfo
@@ -14,7 +13,7 @@ export async function POST(req: NextRequest) {
     delete filterInfo.maxAge
     delete filterInfo.minAge
     const filterWhere: typeof filterInfo = {}
-    for (let key in filterInfo) {
+    for (const key in filterInfo) {
         filterWhere[key] = {
             // 全部采用equals形式，避免json类型无法判断
             equals: filterInfo[key]
@@ -25,7 +24,7 @@ export async function POST(req: NextRequest) {
         if (maxAge) filterWhere.age.lte = maxAge
         if (minAge) filterWhere.age.gte = minAge
     }
-    console.log(filterWhere)
+    // console.log(filterWhere)
     const filterWhereArr = customTags.map((item: string) => ({
         ...filterWhere,
         customTags: {
