@@ -14,7 +14,7 @@ model user_basis {
   id              String  @unique @default(uuid())
   phone           String
   name            String @default("")
-  avatarURL       String @default("")
+  avatarURL       String @db.MediumText
   gender          String?
   age             Int?
   vx              String?
