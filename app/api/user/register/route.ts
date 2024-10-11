@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 import {
   passwordValidator,
   phoneValidator,
-  codeValidator,
+  // codeValidator,
 } from "@/utils/validators";
 import { createToken } from "@/utils/authorization";
 export async function POST(req: NextRequest) {
@@ -13,18 +13,20 @@ export async function POST(req: NextRequest) {
   try {
     const id = uuidv4();
     const body: Register = await req.json();
-    const { phone, code, password } = body;
+    const { phone, password } = body;
     // 格式校验
     await phoneValidator(phone);
     await passwordValidator(password);
-    await codeValidator(code);
+
+    //暂时注释，后续开通
+    // await codeValidator(code);
+
     // 手机号是否已注册
     const hasRegister = !!(await prisma.user_login.findFirst({
       where: {
         phone,
       },
     }));
-    console.log(hasRegister);
     if (hasRegister) await Promise.reject("手机号已注册");
     await prisma.user_login.create({
       data: {

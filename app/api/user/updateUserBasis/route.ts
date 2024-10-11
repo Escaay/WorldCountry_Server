@@ -6,7 +6,6 @@ export async function POST(req: NextRequest) {
     if (body.customTags) body.customTags = Array.from(new Set(body.customTags))
     const prisma = new PrismaClient()
     const {id} = body
-    console.log(body.avatarURL.length)
     const data = await prisma.user_basis.update({
         where: {
             id
