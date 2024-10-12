@@ -15,24 +15,35 @@ try {
   const { phone, password } = body;
   await phoneValidator(phone);
   await passwordValidator(password);
-  const row = await prisma.user_login.findFirst({
+  const userLoginRow = await prisma.user_login.findFirst({
       where: {
           phone: phone
       }
   })
-  if (row === null) {
+  if (userLoginRow === null) {
     await Promise.reject('手机号未注册')
   }
-  if (row?.password !== password) {
+  if (userLoginRow?.password !== password) {
     await Promise.reject('密码错误')
   }
+  const userBasisRow = await prisma.user_basis.findFirst({
+    where: {
+        id: userLoginRow?.id
+    }
+})
+const chatListRow = await prisma.chat_list.findFirst({
+  where: {
+      id: userLoginRow?.id
+  }
+})
     return Response.json({
     code: 200,
     message: "登录成功",
     data: {
-      id: row?.id,
-      accessToken: await createToken({id: row?.id, type: 'access'}),
-      refreshToken: await createToken({id: row?.id, type: 'refresh'})
+      myInfo: userBasisRow,
+      chatList: chatListRow,
+      accessToken: await createToken({id: userLoginRow?.id, type: 'access'}),
+      refreshToken: await createToken({id: userLoginRow?.id, type: 'refresh'})
     },
   });
 
@@ -42,5 +53,7 @@ try {
         code: 400,
         message: e,
       });
+    }finally {
+      prisma.$disconnect();
     }
 }

@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
         password,
       },
     });
-    await prisma.user_basis.create({
+    const initUserBasis = {
       data: {
         id,
         phone,
@@ -50,20 +50,23 @@ export async function POST(req: NextRequest) {
         filterInfo: {},
         filterConds: ['gender', 'minAge', 'maxAge', 'originalAddress', 'currentAddress', 'status', 'customTags']
       },
-    });
+    }
+    const initChatList: any[] = []
+    await prisma.user_basis.create(initUserBasis);
     await prisma.chat_list.create({
       data: {
         id,
-        body: [],
+        body: initChatList,
       },
     });
     return Response.json({
       code: 200,
       message: "注册成功",
       data: {
-        id,
         accessToken: await createToken({ id, type: "access" }),
         refreshToken: await createToken({ id, type: "refresh" }),
+        myInfo: initUserBasis,
+        chatList: initChatList
       },
     });
   } catch (e) {
