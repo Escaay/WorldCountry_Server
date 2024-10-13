@@ -13,8 +13,8 @@ datasource db {
 model user_basis {
   id              String  @unique @default(uuid())
   phone           String
-  name            String @default("")
-  avatarURL       String @db.MediumText
+  name            String  @default("")
+  avatarURL       String  @db.MediumText
   gender          String?
   age             Int?
   vx              String?
@@ -29,17 +29,32 @@ model user_basis {
 }
 
 model user_login {
-  id String @unique @default(uuid())
-  phone String
-  password String
-  registerTime DateTime @default(now())
+  id              String    @unique @default(uuid())
+  phone           String
+  password        String
+  registerTime    DateTime  @default(now())
   recentLoginTime DateTime?
-  accesstoken String?
-  refreshToken String?
-  code String?
+  accesstoken     String?
+  refreshToken    String?
+  code            String?
 }
 
 model chat_list {
-  id String @unique @default(uuid())
-  body Json?
+  userId           String   @unique
+  chatList Json?
+  // chatId  String
+  // partnerId        String
+  // partnerAvatarURL String   @db.MediumText
+  // partnerName      String
+  // lastMessage      String?   @db.MediumText
+  // unReadCount      Int?
+  // lastMessageTime  DateTime? @default(now())
+}
+
+model chat_detail {
+  chatId      String   @unique @default(uuid())
+  senderId1   String
+  senderId2   String
+  createTime  DateTime @default(now())
+  chatHistory Json?
 }
