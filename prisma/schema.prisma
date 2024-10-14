@@ -51,10 +51,11 @@ model chat_list {
   // lastMessageTime  DateTime? @default(now())
 }
 
-model chat_detail {
-  chatId      String   @unique @default(uuid())
+model message_list {
+  messageId      String   @unique @default(uuid())
+  chatId  String
   senderId1   String
   senderId2   String
   createTime  DateTime @default(now())
-  chatHistory Json?
+  content  String
 }
