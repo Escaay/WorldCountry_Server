@@ -33,7 +33,7 @@ try {
 })
 const chatListRow = await prisma.chat_list.findFirst({
   where: {
-      id: userLoginRow?.id
+      userId: userLoginRow?.id
   }
 })
     return Response.json({

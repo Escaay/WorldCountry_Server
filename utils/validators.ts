@@ -1,4 +1,4 @@
-export const passwordValidator: (...args: any[]) => any = (value) => {
+export const passwordValidator: (...args: any[]) => any = (value = '') => {
     const passwordRegExp = /^[A-Za-z0-9@$!%*?&.]{6,}$/;
     if (passwordRegExp.test(value)) {
       return true
@@ -7,7 +7,7 @@ export const passwordValidator: (...args: any[]) => any = (value) => {
     }
 };
 
-export const phoneValidator: (...args: any[]) => any = (value) => {
+export const phoneValidator: (...args: any[]) => any = (value = '') => {
   const phoneRegExp = /^1(3[0-9]|5[0-3,5-9]|7[1-3,5-8]|8[0-9])\d{8}$/;
   if (phoneRegExp.test(value)) {
     return true
@@ -16,7 +16,7 @@ export const phoneValidator: (...args: any[]) => any = (value) => {
   }
 };
 
-export const codeValidator: (...args: any[]) => any = (value) => {
+export const codeValidator: (...args: any[]) => any = (value = '') => {
   const codeRegExp = /^\d{6}$/;
   if (codeRegExp.test(value)) {
     return true

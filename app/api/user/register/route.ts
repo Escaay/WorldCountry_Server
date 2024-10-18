@@ -36,7 +36,6 @@ export async function POST(req: NextRequest) {
       },
     });
     const initUserBasis = {
-      data: {
         id,
         phone,
         name: "新村民",
@@ -49,14 +48,15 @@ export async function POST(req: NextRequest) {
         customTags: ["初出茅庐"],
         filterInfo: {},
         filterConds: ['gender', 'minAge', 'maxAge', 'originalAddress', 'currentAddress', 'status', 'customTags']
-      },
     }
-    const initChatList: any[] = []
-    await prisma.user_basis.create(initUserBasis);
+    const initChatList: [] = []
+    await prisma.user_basis.create({
+      data: initUserBasis
+    });
     await prisma.chat_list.create({
       data: {
-        id,
-        body: initChatList,
+        userId: id,
+        chatList: initChatList
       },
     });
     return Response.json({
