@@ -40,7 +40,7 @@ model user_login {
 }
 
 model chat_list {
-  userId           String   @unique
+  userId   String @unique
   chatList Json?
   // chatId  String
   // partnerId        String
@@ -52,10 +52,31 @@ model chat_list {
 }
 
 model message_list {
-  messageId      String   @unique @default(uuid())
-  chatId  String
-  senderId1   String
-  senderId2   String
-  createTime  DateTime @default(now())
-  content  String
+  messageId  String   @unique @default(uuid())
+  chatId     String
+  senderId   String
+  receiverId String
+  createTime DateTime @default(now())
+  content    String   @db.MediumText
+}
+
+model activity {
+  activityId        String   @unique @default(uuid())
+  address           Json // 帖子属于的地点
+  activityAddress   Json // 活动地点
+  senderId          String
+  senderAvatarURL   String
+  senderName        String
+  senderGender      String
+  senderAge         String
+  textContent       String // 文字内容
+  commentNum        Int // 评论数
+  comment           Json // 评论信息
+  likeNum           Int // 点赞数
+  like              Json // 点赞用户的id列表
+  maxPaticipant     Int // 最大参与人数
+  currentPaticipant Json // 目前参与人
+  imageURL          String?  @db.MediumText // 图片内容
+  createTime        DateTime @default(now())
+  updateTime        DateTime @updatedAt
 }
