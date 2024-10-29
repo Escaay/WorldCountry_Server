@@ -60,6 +60,7 @@ model message_list {
   content    String   @db.MediumText
 }
 
+// 活动帖子表
 model activity {
   activityId        String   @unique @default(uuid())
   address           Json // 帖子属于的地点
@@ -68,15 +69,28 @@ model activity {
   senderAvatarURL   String
   senderName        String
   senderGender      String
-  senderAge         String
+  senderAge         Int
   textContent       String // 文字内容
-  commentNum        Int // 评论数
-  comment           Json // 评论信息
-  likeNum           Int // 点赞数
+  commentNum        Int      @default(0) // 评论数
+  comment           Json     @default("[]") // 评论信息
+  likeNum           Int      @default(0) // 点赞数
   like              Json // 点赞用户的id列表
   maxPaticipant     Int // 最大参与人数
   currentPaticipant Json // 目前参与人
   imageURL          String?  @db.MediumText // 图片内容
   createTime        DateTime @default(now())
   updateTime        DateTime @updatedAt
+}
+
+// 活动帖子评论表
+model activity_comment {
+  commentId       String   @unique @default(uuid())
+  activityId      String
+  content         String
+  likeNum         Int      @default(0)
+  senderId        String
+  senderAvatarURL String   @db.MediumText
+  senderName      String
+  createTime      DateTime @default(now())
+  updateTime      DateTime @updatedAt
 }
