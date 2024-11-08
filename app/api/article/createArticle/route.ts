@@ -3,12 +3,9 @@ import { PrismaClient } from "@prisma/client";
 export async function POST(req: NextRequest) {
   const body = await req.json();
   const prisma = new PrismaClient();
-  const { activityId } = body;
   try {
-    const row = await prisma.activity.delete({
-      where: {
-        activityId,
-      },
+    const row = await prisma.article.create({
+      data: body
     });
     return Response.json({
       code: 200,
