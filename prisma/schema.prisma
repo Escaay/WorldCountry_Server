@@ -60,37 +60,54 @@ model message_list {
   content    String   @db.MediumText
 }
 
-// 活动帖子表
-model activity {
-  activityId        String   @unique @default(uuid())
-  address           Json // 帖子属于的地点
-  activityAddress   Json // 活动地点
-  senderId          String
-  senderAvatarURL   String
-  senderName        String
-  senderGender      String
-  senderAge         Int
-  textContent       String // 文字内容
-  commentNum        Int      @default(0) // 评论数
-  comment           Json     @default("[]") // 评论信息
-  likeNum           Int      @default(0) // 点赞数
-  like              Json // 点赞用户的id列表
-  maxPaticipant     Int // 最大参与人数
-  currentPaticipant Json // 目前参与人
-  imageURL          String?  @db.MediumText // 图片内容
-  createTime        DateTime @default(now())
-  updateTime        DateTime @updatedAt
+// 文章表
+model article {
+  articleId           String   @unique @default(uuid())
+  // articleAddress   Json // 活动地点
+  senderOriginAddress Json
+  senderId            String
+  senderAvatarURL     String
+  senderName          String
+  senderGender        String
+  senderAge           Int
+  textContent         String // 文字内容
+  commentNum          Int      @default(0) // 评论数
+  comment             Json     @default("[]") // 评论信息
+  likeNum             Int      @default(0) // 点赞数
+  like                Json // 点赞用户的id列表
+  viewNum             Int // 浏览量（点进去才算）
+  imageUrlList        Json? // 图片内容数组，现在是base64,以后是url路径
+  createTime          DateTime @default(now())
+  updateTime          DateTime @updatedAt
 }
 
-// 活动帖子评论表
-model activity_comment {
+// 文章评论表
+model article_comment {
   commentId       String   @unique @default(uuid())
-  activityId      String
+  articleId       String
   content         String
   likeNum         Int      @default(0)
   senderId        String
+  senderGender    String
   senderAvatarURL String   @db.MediumText
   senderName      String
   createTime      DateTime @default(now())
   updateTime      DateTime @updatedAt
+}
+
+model activity {
+  activityId          String   @unique @default(uuid())
+  gameName            String // 游戏名称(王者荣耀，和平精英等)
+  senderOriginAddress Json
+  senderId            String
+  senderAvatarURL     String
+  senderName          String
+  senderGender        String
+  senderAge           Int
+  textContent         String // 文字内容
+  viewNum             Int // 浏览量（点进去才算）
+  maxPaticipant       Int // 最大参与人数
+  currentPaticipant   Json // 目前参与人信息(userId, userAvatarURL, userGender, userName)
+  createTime          DateTime @default(now())
+  updateTime          DateTime @updatedAt
 }
