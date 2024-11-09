@@ -4,18 +4,19 @@ export async function POST(req: NextRequest) {
     const body = await req.json()
     const prisma = new PrismaClient()
     // 线上的address是["线上", "全部"]， isDetail是否详情（评论信息等）
-    const {senderOriginAddress} = body
+    const {senderOriginalAddress = []} = body
     try {
-    const row = await prisma.activity.findMany({
+    const row = await prisma.article.findMany({
         where: {
-            senderOriginAddress: {
-                array_contains: senderOriginAddress
+            senderOriginalAddress: {
+                array_contains: senderOriginalAddress
             }
         },
         orderBy: {
             updateTime: 'asc'
         }
     })
+    console.log(row)
     return Response.json({
         code: 200,
         message: '成功',
