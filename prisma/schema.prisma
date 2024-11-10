@@ -18,14 +18,11 @@ model user_basis {
   gender          String?
   age             Int?
   vx              String?
-  originalAddress Json?
   currentAddress  Json?
-  status          Json?
+  gameList          Json? @default("[]")
   filterInfo      Json?
   filterConds     Json? // 筛选条件
   customTags      Json?
-  height          Int?
-  weight          Int?
 }
 
 model user_login {
@@ -64,19 +61,17 @@ model message_list {
 model article {
   articleId           String   @unique @default(uuid())
   // articleAddress   Json // 活动地点
-  senderOriginAddress Json
+  senderCurrentAddress Json @default("[]")
   senderId            String
-  senderAvatarURL     String
+  senderAvatarURL     String   @db.MediumText
   senderName          String
   senderGender        String
   senderAge           Int
   textContent         String // 文字内容
   commentNum          Int      @default(0) // 评论数
-  comment             Json     @default("[]") // 评论信息
-  likeNum             Int      @default(0) // 点赞数
-  like                Json // 点赞用户的id列表
-  viewNum             Int // 浏览量（点进去才算）
-  imageUrlList        Json? // 图片内容数组，现在是base64,以后是url路径
+  likeInfo            Json @default("[]") // 点赞人的信息，目前只有[{userId}],用于判断是否点赞过
+  viewNum             Int @default(0) // 浏览量（点进去才算）
+  imageUrlList        Json @default("[]")// 图片内容数组，现在是base64,以后是url路径
   createTime          DateTime @default(now())
   updateTime          DateTime @updatedAt
 }
@@ -86,7 +81,7 @@ model article_comment {
   commentId       String   @unique @default(uuid())
   articleId       String
   content         String
-  likeNum         Int      @default(0)
+  likeInfo        Json // 点赞人的信息，目前只有[{userId}],用于判断是否点赞过
   senderId        String
   senderGender    String
   senderAvatarURL String   @db.MediumText
@@ -98,14 +93,15 @@ model article_comment {
 model activity {
   activityId          String   @unique @default(uuid())
   gameName            String // 游戏名称(王者荣耀，和平精英等)
-  senderOriginAddress Json
+  senderCurrentAddress Json
+  expireTime          DateTime // 绝对时间，用服务器时间作比较
   senderId            String
-  senderAvatarURL     String
+  senderAvatarURL     String @db.MediumText
   senderName          String
   senderGender        String
   senderAge           Int
   textContent         String // 文字内容
-  viewNum             Int // 浏览量（点进去才算）
+  viewNum             Int @default(0)// 浏览量（点进去才算）
   maxPaticipant       Int // 最大参与人数
   currentPaticipant   Json // 目前参与人信息(userId, userAvatarURL, userGender, userName)
   createTime          DateTime @default(now())

@@ -24,10 +24,6 @@ export type UserBasis = {
      */
     gender?: string;
     /**
-     * 身高
-     */
-    height?: string;
-    /**
      * 用户ID
      */
     id: string;
@@ -35,10 +31,6 @@ export type UserBasis = {
      * 姓名
      */
     name?: string;
-    /**
-     * 籍贯地
-     */
-    originalAddress?: string[];
     /**
      * 手机号
      */
@@ -51,10 +43,6 @@ export type UserBasis = {
      * 微信号
      */
     vx?: string;
-    /**
-     * 体重
-     */
-    weight?: string;
   }
   
   export type FilterInfo = {
@@ -82,10 +70,6 @@ export type UserBasis = {
      * 姓名
      */
     name?: string;
-    /**
-     * 籍贯地
-     */
-    originalAddress?: string[];
     /**
      * 手机号
      */
