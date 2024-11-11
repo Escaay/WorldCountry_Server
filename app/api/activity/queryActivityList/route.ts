@@ -4,12 +4,17 @@ export async function POST(req: NextRequest) {
     const body = await req.json()
     const prisma = new PrismaClient()
     // 线上的address是["线上", "全部"]， isDetail是否详情（评论信息等）
-    const {senderOriginAddress} = body
+    const {senderCurrentAddress} = body
+    const now = new Date()
     try {
     const row = await prisma.activity.findMany({
         where: {
-            senderOriginAddress: {
-                array_contains: senderOriginAddress
+            // 选出未过期的组队记录
+            expireTime: {
+                gt: now
+            },
+            senderCurrentAddress: {
+                array_contains: senderCurrentAddress
             }
         },
         orderBy: {
