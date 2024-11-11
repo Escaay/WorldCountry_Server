@@ -13,6 +13,7 @@ export async function POST(req: NextRequest) {
       data: row,
     });
   } catch (e) {
+    console.log(e)
     return Response.json({
       code: 500,
       messsage: "失败",
