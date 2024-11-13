@@ -80,10 +80,14 @@ model article {
 model article_comment {
   commentId       String   @unique @default(uuid())
   articleId       String
-  content         String
-  likeInfo        Json // 点赞人的信息，目前只有[{userId}],用于判断是否点赞过
+  articleSenderId String
+  textContent         String
+  imageURL String? @db.MediumText // 评论中只能发一张图片
+  likeInfo        Json @default("[]") // 点赞人的信息，目前只有[{userId}],用于判断是否点赞过
   senderId        String
   senderGender    String
+  senderAge Int
+  senderCurrentAddress Json
   senderAvatarURL String   @db.MediumText
   senderName      String
   createTime      DateTime @default(now())
