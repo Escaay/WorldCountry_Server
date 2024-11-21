@@ -62,6 +62,8 @@ model article {
   articleId           String   @unique @default(uuid())
   // articleAddress   Json // 活动地点
   senderCurrentAddress Json @default("[]")
+  tag String // 分类标签（随手发，找搭子，约组队）
+  gameName String? // 游戏名称(找搭子和约组队必选，随手发可以不选)
   senderId            String
   senderAvatarURL     String   @db.MediumText
   senderName          String
@@ -86,6 +88,7 @@ model article_comment {
   imageURL String? @db.MediumText // 评论中只能发一张图片
   senderId        String
   senderGender    String
+  likeNum Int
   isRead Boolean @default(false)
   senderAge Int
   senderCurrentAddress Json
@@ -129,20 +132,20 @@ model article_comment_like {
   updateTime      DateTime @updatedAt
 }
 
-model activity {
-  activityId          String   @unique @default(uuid())
-  gameName            String // 游戏名称(王者荣耀，和平精英等)
-  senderCurrentAddress Json
-  expireTime          DateTime // 绝对时间，用服务器时间作比较
-  senderId            String
-  senderAvatarURL     String @db.MediumText
-  senderName          String
-  senderGender        String
-  senderAge           Int
-  textContent         String // 文字内容
-  viewNum             Int @default(0)// 浏览量（点进去才算）
-  maxPaticipant       Int // 最大参与人数
-  currentPaticipant   Json // 目前参与人信息(userId, userAvatarURL, userGender, userName)
-  createTime          DateTime @default(now())
-  updateTime          DateTime @updatedAt
-}
+// model activity {
+//   activityId          String   @unique @default(uuid())
+//   gameName            String // 游戏名称(王者荣耀，和平精英等)
+//   senderCurrentAddress Json
+//   expireTime          DateTime // 绝对时间，用服务器时间作比较
+//   senderId            String
+//   senderAvatarURL     String @db.MediumText
+//   senderName          String
+//   senderGender        String
+//   senderAge           Int
+//   textContent         String // 文字内容
+//   viewNum             Int @default(0)// 浏览量（点进去才算）
+//   maxPaticipant       Int // 最大参与人数
+//   currentPaticipant   Json // 目前参与人信息(userId, userAvatarURL, userGender, userName)
+//   createTime          DateTime @default(now())
+//   updateTime          DateTime @updatedAt
+// }
