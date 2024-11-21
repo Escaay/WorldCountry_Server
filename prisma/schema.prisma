@@ -69,7 +69,6 @@ model article {
   senderAge           Int
   textContent         String // 文字内容
   commentNum          Int      @default(0) // 评论数
-  likeInfo            Json @default("[]") // 点赞人的信息，目前只有[{userId}],用于判断是否点赞过
   viewNum             Int @default(0) // 浏览量（点进去才算）
   imageUrlList        Json @default("[]")// 图片内容数组，现在是base64,以后是url路径
   createTime          DateTime @default(now())
@@ -78,14 +77,50 @@ model article {
 
 // 文章评论表
 model article_comment {
-  commentId       String   @unique @default(uuid())
+  articlecCommentId       String   @unique @default(uuid())
   articleId       String
   articleSenderId String
-  textContent         String
+  articleTextContent String?
+  level  Int? // 1为一级评论，2为二级评论（回复1级评论），3为三级评论（回复2级评论），用于区分前端的展示
+  textContent         String?
   imageURL String? @db.MediumText // 评论中只能发一张图片
-  likeInfo        Json @default("[]") // 点赞人的信息，目前只有[{userId}],用于判断是否点赞过
   senderId        String
   senderGender    String
+  isRead Boolean @default(false)
+  senderAge Int
+  senderCurrentAddress Json
+  senderAvatarURL String   @db.MediumText
+  senderName      String
+  createTime      DateTime @default(now())
+  updateTime      DateTime @updatedAt
+}
+
+// 文章点赞表
+model article_like {
+  articleLikeId   String   @unique @default(uuid())
+  articleId       String
+  articleSenderId String
+  articleTextContent String?
+  senderId        String
+  senderGender    String
+  isRead Boolean @default(false)
+  senderAge Int
+  senderCurrentAddress Json
+  senderAvatarURL String   @db.MediumText
+  senderName      String
+  createTime      DateTime @default(now())
+  updateTime      DateTime @updatedAt
+}
+
+model article_comment_like {
+  articleCommentLikeId   String   @unique @default(uuid())
+  articleCommentId String
+  articleId       String
+  articleSenderId String
+  articleTextContent String?
+  senderId        String
+  senderGender    String
+  isRead Boolean @default(false)
   senderAge Int
   senderCurrentAddress Json
   senderAvatarURL String   @db.MediumText
