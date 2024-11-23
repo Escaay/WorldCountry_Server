@@ -88,7 +88,6 @@ model article_comment {
   imageURL String? @db.MediumText // 评论中只能发一张图片
   senderId        String
   senderGender    String
-  likeNum Int
   isRead Boolean @default(false)
   senderAge Int
   senderCurrentAddress Json
@@ -120,6 +119,7 @@ model article_comment_like {
   articleCommentId String
   articleId       String
   articleSenderId String
+  commentSenderId String
   articleTextContent String?
   senderId        String
   senderGender    String
