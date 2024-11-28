@@ -62,13 +62,16 @@ model article {
   articleId           String   @unique @default(uuid())
   // articleAddress   Json // 活动地点
   senderCurrentAddress Json @default("[]")
-  tag String // 分类标签（随手发，找搭子，约组队）
+  tag String // 分类标签（发日常，找搭子，约组队）
   gameName String? // 游戏名称(找搭子和约组队必选，随手发可以不选)
   senderId            String
   senderAvatarURL     String   @db.MediumText
   senderName          String
   senderGender        String
   senderAge           Int
+  playTime DateTime? // 只有约组队才有，具体的游戏时间
+  peopleNum Int? // 组队人数,只有约组队才有
+  teamPeople Json? // 组队队伍信息，只有约组队才有[{peopleId, peopleAvatarURL, peopleName, peopleGender}]
   textContent         String // 文字内容
   commentNum          Int      @default(0) // 评论数
   viewNum             Int @default(0) // 浏览量（点进去才算）
@@ -79,7 +82,7 @@ model article {
 
 // 文章评论表
 model article_comment {
-  articlecCommentId       String   @unique @default(uuid())
+  articleCommentId       String   @unique @default(uuid())
   articleId       String
   articleSenderId String
   articleTextContent String?
