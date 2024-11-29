@@ -83,12 +83,12 @@ model article {
 }
 
 // 申请加入队伍的人的信息，和teamPeople类似，只有约组队才有m[{peopleId, peopleAvatarURL, peopleName, peopleGender}]
-model team_applicant {
+model team_application {
   applicationId   String @unique @default(uuid())
   articleId           String
   userId String
   textContent String // 申请信息
-  articleContent String // 文章文字内容
+  articleTextContent String // 文章文字内容
   articleFirstImageURL  String? @db.MediumText // 文章首图
   status Int // 当前状态（0为待处理，1为已同意，2为已拒绝）
   userAvatarURL String @db.MediumText
