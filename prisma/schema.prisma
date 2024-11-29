@@ -71,7 +71,9 @@ model article {
   senderAge           Int
   playTime DateTime? // 只有约组队才有，具体的游戏时间
   peopleNum Int? // 组队人数,只有约组队才有
-  teamPeople Json? // 组队队伍信息，只有约组队才有[{peopleId, peopleAvatarURL, peopleName, peopleGender}]
+  teamPeople Json? // 组队队伍信息，只有约组队才有,[{peopleId, peopleAvatarURL, peopleName, peopleGender}]
+  // 如果把applicant放在这里，就必须要从数据库里面取出来才能count计数了，也没法单独取出某个字段，没法加一些where条件，不能做到极致的性能优化，所以需要分表
+  // applicant Json? 
   textContent         String // 文字内容
   commentNum          Int      @default(0) // 评论数
   viewNum             Int @default(0) // 浏览量（点进去才算）
@@ -80,12 +82,27 @@ model article {
   updateTime          DateTime @updatedAt
 }
 
+// 申请加入队伍的人的信息，和teamPeople类似，只有约组队才有m[{peopleId, peopleAvatarURL, peopleName, peopleGender}]
+model team_applicant {
+  applicationId   String @unique @default(uuid())
+  articleId           String
+  userId String
+  textContent String // 申请信息
+  articleContent String // 文章文字内容
+  articleFirstImageURL  String? @db.MediumText // 文章首图
+  status Int // 当前状态（0为待处理，1为已同意，2为已拒绝）
+  userAvatarURL String @db.MediumText
+  userName String
+  userGender String
+}
+
 // 文章评论表
 model article_comment {
   articleCommentId       String   @unique @default(uuid())
   articleId       String
   articleSenderId String
   articleTextContent String?
+  articleFirstImageURL String? @db.MediumText // 文章首图
   level  Int? // 1为一级评论，2为二级评论（回复1级评论），3为三级评论（回复2级评论），用于区分前端的展示
   textContent         String?
   imageURL String? @db.MediumText // 评论中只能发一张图片
