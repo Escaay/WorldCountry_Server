@@ -11,18 +11,27 @@ datasource db {
 }
 
 model user_basis {
-  id              String  @unique @default(uuid())
-  phone           String
-  name            String  @default("")
-  avatarURL       String  @db.MediumText
-  gender          String?
-  age             Int?
-  vx              String?
-  currentAddress  Json?
-  gameList          Json? @default("[]")
-  filterInfo      Json?
-  filterConds     Json? // 筛选条件
-  customTags      Json?
+  id               String             @unique @default(uuid())
+  phone            String
+  name             String             @default("")
+  avatarURL        String             @db.MediumText
+  gender           String?
+  age              Int?
+  vx               String?
+  currentAddress   Json?
+  gameList         Json?              @default("[]")
+  filterInfo       Json?
+  filterConds      Json? // 筛选条件
+  customTags       Json?
+  teamApplication team_application[] // new
+  article          article[] // new
+  chatListSender        chat_list[]  @relation(name: "sender") // new
+  chatListReceiver        chat_list[]  @relation(name: "receiver") // new
+  messageListSender        message_list[]  @relation(name: "sender") // new
+  messageListReceiver        message_list[]  @relation(name: "receiver") // new
+  article_like article_like[]
+  article_comment_like article_comment_like[]
+  article_comment article_comment[]
 }
 
 model user_login {
@@ -37,119 +46,148 @@ model user_login {
 }
 
 model chat_list {
-  userId   String @unique
-  chatList Json?
-  // chatId  String
+  chatId   String @unique @default("")// new 
+  // userId   String?
+  senderId String?
+  sender   user_basis? @relation(fields: [senderId], references: [id], name: "sender") // new
+  receiverId String?
+  receiver user_basis? @relation(fields: [receiverId], references: [id], name: "receiver") // new {id, name, avatarURL}
+  messageList message_list[]
   // partnerId        String
   // partnerAvatarURL String   @db.MediumText
   // partnerName      String
-  // lastMessage      String?   @db.MediumText
-  // unReadCount      Int?
-  // lastMessageTime  DateTime? @default(now())
+  lastMessage      String?
+  senderUnreadCount      Int?
+  receiverUnreadCount      Int?
+  lastMessageTime  DateTime? @default(now())
 }
+
+// 创建chat参数示例
+// {
+//   chatId: '3621fea2-cdce-4385-8565-b137dc04f9f6',
+//   receiver: { connect: { id: 'f1cc6289-7c12-4054-ac5a-12fde2b13ab0' } },
+//   lastMessage: '你好',
+//   unReadCount: 0,
+//   lastMessageTime: '2024-11-30T14:25:12.436Z',
+//   sender: { connect: { id: '0a4567e5-525d-420a-8cef-f7a36baf9671' } }
+// }
 
 model message_list {
   messageId  String   @unique @default(uuid())
   chatId     String
-  senderId   String
-  receiverId String
+  chat chat_list @relation(fields: [chatId], references: [chatId]) // new
+  senderId   String?
+  sender   user_basis? @relation(fields: [senderId], references: [id], name: "sender") // new
+  receiverId String?
+  receiver user_basis? @relation(fields: [receiverId], references: [id], name: "receiver") // new
+  isRead     Boolean? // new
   createTime DateTime @default(now())
   content    String   @db.MediumText
 }
 
 // 文章表
 model article {
-  articleId           String   @unique @default(uuid())
-  // articleAddress   Json // 活动地点
-  senderCurrentAddress Json @default("[]")
-  tag String // 分类标签（发日常，找搭子，约组队）
-  gameName String? // 游戏名称(找搭子和约组队必选，随手发可以不选)
-  senderId            String
-  senderAvatarURL     String   @db.MediumText
-  senderName          String
-  senderGender        String
-  senderAge           Int
-  playTime DateTime? // 只有约组队才有，具体的游戏时间
-  peopleNum Int? // 组队人数,只有约组队才有
-  teamPeople Json? // 组队队伍信息，只有约组队才有,[{peopleId, peopleAvatarURL, peopleName, peopleGender}]
+  articleId            String             @unique @default(uuid())
+  tag                  String // 分类标签（发日常，找搭子，约组队）
+  gameName             String? // 游戏名称(找搭子和约组队必选，随手发可以不选)
+  senderId             String
+  sender               user_basis         @relation(fields: [senderId], references: [id])
+  playTime             DateTime? // 只有约组队才有，具体的游戏时间
+  peopleNum            Int? // 组队人数,只有约组队才有
+  teamPeople           Json? // 组队队伍信息，只有约组队才有,[{peopleId, peopleAvatarURL, peopleName, peopleGender}]
   // 如果把applicant放在这里，就必须要从数据库里面取出来才能count计数了，也没法单独取出某个字段，没法加一些where条件，不能做到极致的性能优化，所以需要分表
   // applicant Json? 
-  textContent         String // 文字内容
-  commentNum          Int      @default(0) // 评论数
-  viewNum             Int @default(0) // 浏览量（点进去才算）
-  imageUrlList        Json @default("[]")// 图片内容数组，现在是base64,以后是url路径
-  createTime          DateTime @default(now())
-  updateTime          DateTime @updatedAt
+  textContent          String // 文字内容
+  commentNum           Int                @default(0) // 评论数
+  viewNum              Int                @default(0) // 浏览量（点进去才算）
+  imageUrlList         Json               @default("[]") // 图片内容数组，现在是base64,以后是url路径
+  createTime           DateTime           @default(now())
+  updateTime           DateTime           @updatedAt
+  team_application     team_application[]
+  articleComment article_comment[]
+  articleLike article_like[]
+  articleCommentLike article_comment_like[]
 }
 
 // 申请加入队伍的人的信息，和teamPeople类似，只有约组队才有m[{peopleId, peopleAvatarURL, peopleName, peopleGender}]
 model team_application {
-  applicationId   String @unique @default(uuid())
-  articleId           String
-  userId String
-  textContent String // 申请信息
-  articleTextContent String // 文章文字内容
-  articleFirstImageURL  String? @db.MediumText // 文章首图
-  status Int // 当前状态（0为待处理，1为已同意，2为已拒绝）
-  userAvatarURL String @db.MediumText
-  userName String
-  userGender String
+  applicationId String     @unique @default(uuid())
+  applicantId   String
+  articleId     String
+  textContent   String // 申请信息
+  status        Int        @default(0) // 当前状态（0为待处理，1为已同意，2为已拒绝）
+  article       article    @relation(fields: [articleId], references: [articleId])
+  applicant     user_basis @relation(fields: [applicantId], references: [id])
+  // userId               String
+  // articleTextContent   String // 文章文字内容
+  // articleFirstImageURL String? @db.MediumText // 文章首图
+  // userAvatarURL        String  @db.MediumText
+  // userName             String
+  // userGender           String
 }
 
 // 文章评论表
 model article_comment {
-  articleCommentId       String   @unique @default(uuid())
-  articleId       String
-  articleSenderId String
-  articleTextContent String?
-  articleFirstImageURL String? @db.MediumText // 文章首图
-  level  Int? // 1为一级评论，2为二级评论（回复1级评论），3为三级评论（回复2级评论），用于区分前端的展示
-  textContent         String?
-  imageURL String? @db.MediumText // 评论中只能发一张图片
-  senderId        String
-  senderGender    String
-  isRead Boolean @default(false)
-  senderAge Int
+  articleCommentId     String   @unique @default(uuid())
+  article article @relation(fields: [articleId], references: [articleId]) // new
+  articleId            String
+  articleSenderId      String
+  articleTextContent   String?
+  articleFirstImageURL String?  @db.MediumText // 文章首图
+  level                Int? // 1为一级评论，2为二级评论（回复1级评论），3为三级评论（回复2级评论），用于区分前端的展示
+  textContent          String?
+  imageURL             String?  @db.MediumText // 评论中只能发一张图片
+  senderId             String
+  senderGender         String
+  isRead               Boolean  @default(false)
+  sender user_basis @relation(fields: [senderId], references: [id])
+  senderAge            Int
   senderCurrentAddress Json
-  senderAvatarURL String   @db.MediumText
-  senderName      String
-  createTime      DateTime @default(now())
-  updateTime      DateTime @updatedAt
+  senderAvatarURL      String   @db.MediumText
+  senderName           String
+  createTime           DateTime @default(now())
+  updateTime           DateTime @updatedAt
+  articleCommentLike article_comment_like[]
 }
 
 // 文章点赞表
 model article_like {
-  articleLikeId   String   @unique @default(uuid())
-  articleId       String
-  articleSenderId String
-  articleTextContent String?
-  senderId        String
-  senderGender    String
-  isRead Boolean @default(false)
-  senderAge Int
-  senderCurrentAddress Json
-  senderAvatarURL String   @db.MediumText
-  senderName      String
-  createTime      DateTime @default(now())
-  updateTime      DateTime @updatedAt
+  articleLikeId        String   @unique @default(uuid())
+  articleId            String
+  article article @relation(fields: [articleId], references: [articleId]) // new {textContent, articleId, imageUrlList, sender: {id, gender, age, name, currentAddress, avatarURL}}
+  // articleSenderId      String
+  // articleTextContent   String?
+  senderId             String
+  // senderGender         String
+  sender user_basis @relation(fields: [senderId], references: [id]) // new {id, avatarURL, name, age, currentAddress, gender}
+  isRead               Boolean  @default(false)
+  // senderAge            Int
+  // senderCurrentAddress Json
+  // senderAvatarURL      String   @db.MediumText
+  // senderName           String
+  createTime           DateTime @default(now())
+  updateTime           DateTime @updatedAt
 }
 
 model article_comment_like {
-  articleCommentLikeId   String   @unique @default(uuid())
-  articleCommentId String
-  articleId       String
-  articleSenderId String
-  commentSenderId String
-  articleTextContent String?
-  senderId        String
-  senderGender    String
-  isRead Boolean @default(false)
-  senderAge Int
+  articleCommentLikeId String   @unique @default(uuid())
+  articleCommentId     String
+  articleComment article_comment @relation(fields: [articleCommentId], references: [articleCommentId]) // new
+  articleId            String
+  article article @relation(fields: [articleId], references: [articleId]) // new
+  articleSenderId      String
+  commentSenderId      String
+  sender user_basis @relation(fields: [senderId], references: [id])
+  articleTextContent   String?
+  senderId             String
+  senderGender         String
+  isRead               Boolean  @default(false)
+  senderAge            Int
   senderCurrentAddress Json
-  senderAvatarURL String   @db.MediumText
-  senderName      String
-  createTime      DateTime @default(now())
-  updateTime      DateTime @updatedAt
+  senderAvatarURL      String   @db.MediumText
+  senderName           String
+  createTime           DateTime @default(now())
+  updateTime           DateTime @updatedAt
 }
 
 // model activity {
