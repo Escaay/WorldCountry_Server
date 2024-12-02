@@ -91,6 +91,7 @@ model article {
   tag                  String // 分类标签（发日常，找搭子，约组队）
   gameName             String? // 游戏名称(找搭子和约组队必选，随手发可以不选)
   senderId             String
+  articleAddress Json? // 文章所属的地址，如果依赖个人地址，进行同城筛选的时候会造成很大的性能损耗
   sender               user_basis         @relation(fields: [senderId], references: [id])
   playTime             DateTime? // 只有约组队才有，具体的游戏时间
   peopleNum            Int? // 组队人数,只有约组队才有
@@ -129,24 +130,27 @@ model team_application {
 // 文章评论表
 model article_comment {
   articleCommentId     String   @unique @default(uuid())
-  article article @relation(fields: [articleId], references: [articleId]) // new
   articleId            String
+  article article @relation(fields: [articleId], references: [articleId]) // new
   articleSenderId      String
-  articleTextContent   String?
-  articleFirstImageURL String?  @db.MediumText // 文章首图
+  replyArticlCommentId String? // 只有level为2和3的时候才有
+  replyArticlName String? // 只有level为3的时候才有,前端显示回复xxx
+  // articleTextContent   String?
+  // articleFirstImageURL String?  @db.MediumText // 文章首图
   level                Int? // 1为一级评论，2为二级评论（回复1级评论），3为三级评论（回复2级评论），用于区分前端的展示
   textContent          String?
   imageURL             String?  @db.MediumText // 评论中只能发一张图片
   senderId             String
-  senderGender         String
-  isRead               Boolean  @default(false)
   sender user_basis @relation(fields: [senderId], references: [id])
-  senderAge            Int
-  senderCurrentAddress Json
-  senderAvatarURL      String   @db.MediumText
-  senderName           String
+  // senderGender         String
+  isRead               Boolean  @default(false)
+  // senderAge            Int
+  // senderCurrentAddress Json
+  // senderAvatarURL      String   @db.MediumText
+  // senderName           String
   createTime           DateTime @default(now())
   updateTime           DateTime @updatedAt
+  // replyComment  article_comment[]
   articleCommentLike article_comment_like[]
 }
 
@@ -155,7 +159,7 @@ model article_like {
   articleLikeId        String   @unique @default(uuid())
   articleId            String
   article article @relation(fields: [articleId], references: [articleId]) // new {textContent, articleId, imageUrlList, sender: {id, gender, age, name, currentAddress, avatarURL}}
-  // articleSenderId      String
+  articleSenderId      String
   // articleTextContent   String?
   senderId             String
   // senderGender         String
@@ -175,17 +179,17 @@ model article_comment_like {
   articleComment article_comment @relation(fields: [articleCommentId], references: [articleCommentId]) // new
   articleId            String
   article article @relation(fields: [articleId], references: [articleId]) // new
-  articleSenderId      String
+  // articleSenderId      String
   commentSenderId      String
-  sender user_basis @relation(fields: [senderId], references: [id])
-  articleTextContent   String?
   senderId             String
-  senderGender         String
+  sender user_basis @relation(fields: [senderId], references: [id])
+  // articleTextContent   String?
+  // senderGender         String
   isRead               Boolean  @default(false)
-  senderAge            Int
-  senderCurrentAddress Json
-  senderAvatarURL      String   @db.MediumText
-  senderName           String
+  // senderAge            Int
+  // senderCurrentAddress Json
+  // senderAvatarURL      String   @db.MediumText
+  // senderName           String
   createTime           DateTime @default(now())
   updateTime           DateTime @updatedAt
 }
