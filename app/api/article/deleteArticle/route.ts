@@ -12,13 +12,14 @@ export async function POST(req: NextRequest) {
     });
     return Response.json({
       code: 200,
-      messsage: "成功",
+      message: "成功",
       data: row,
     });
   } catch (e) {
+    console.log(e)
     return Response.json({
       code: 500,
-      messsage: "失败",
+      message: "失败",
     });
   } finally {
     prisma.$disconnect();

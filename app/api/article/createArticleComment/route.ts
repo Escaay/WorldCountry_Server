@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
   console.log(e)
   return Response.json({
       code: 500,
-      messsage: "失败",
+      message: "失败",
     });
   } finally {
     prisma.$disconnect();
